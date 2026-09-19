@@ -7,15 +7,6 @@ const GameContext = createContext();
 
 const INITIAL_POINTS = 250;
 
-const DEFAULT_SHIPPING_ADDRESS = {
-  fullName: 'Alex Miller',
-  street: 'Calle Mayor 14, 2º B',
-  city: 'Madrid',
-  postalCode: '28013',
-  country: 'Spain',
-  phone: '+34 612 345 678'
-};
-
 export const GameProvider = ({ children }) => {
   const [points, setPoints] = useState(() => {
     const saved = localStorage.getItem('rurio_points');
@@ -32,7 +23,7 @@ export const GameProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : [];
   });
 
-  // Physical orders delivered to address
+  // Store pickup orders
   const [orders, setOrders] = useState(() => {
     const saved = localStorage.getItem('rurio_orders');
     return saved ? JSON.parse(saved) : [];
@@ -42,11 +33,6 @@ export const GameProvider = ({ children }) => {
   const [coupons, setCoupons] = useState(() => {
     const saved = localStorage.getItem('rurio_coupons');
     return saved ? JSON.parse(saved) : [];
-  });
-
-  const [shippingAddress, setShippingAddress] = useState(() => {
-    const saved = localStorage.getItem('rurio_shipping_address');
-    return saved ? JSON.parse(saved) : DEFAULT_SHIPPING_ADDRESS;
   });
 
   const [activeTab, setActiveTab] = useState('missions'); // 'missions' | 'map' | 'market' | 'backpack'
@@ -71,10 +57,6 @@ export const GameProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('rurio_coupons', JSON.stringify(coupons));
   }, [coupons]);
-
-  useEffect(() => {
-    localStorage.setItem('rurio_shipping_address', JSON.stringify(shippingAddress));
-  }, [shippingAddress]);
 
   const fireCelebration = () => {
     try {
@@ -113,14 +95,13 @@ export const GameProvider = ({ children }) => {
     completeMission(missionId);
   };
 
-  // Purchase physical product with home delivery
-  const buyPhysicalProduct = (product, customAddress = null) => {
+  // Purchase product for Local Store Pickup with QR code
+  const buyStoreProduct = (product) => {
     if (points < product.pointsCost) {
       return { success: false, message: 'Not enough points' };
     }
 
-    const address = customAddress || shippingAddress;
-    const trackingCode = `CORREOS-ES-${Math.floor(100000 + Math.random() * 900000)}`;
+    const pickupCode = `RURIO-PKUP-${Math.floor(1000 + Math.random() * 9000)}`;
 
     const newOrder = {
       orderId: 'ord_' + Date.now(),
@@ -128,18 +109,18 @@ export const GameProvider = ({ children }) => {
       title: product.title,
       category: product.category,
       merchant: product.merchant,
+      pickupLocation: product.pickupLocation,
+      pickupAddress: product.pickupAddress,
+      openingHours: product.openingHours,
       image: product.image,
       pointsPaid: product.pointsCost,
-      trackingCode,
-      carrier: 'Correos Express Postal',
-      estimatedArrival: 'Estimated 3-5 business days',
+      pickupCode,
       orderedAt: new Date().toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
         year: 'numeric'
       }),
-      shippingAddress: address,
-      status: 'Processing Shipment'
+      status: 'Ready for Pickup'
     };
 
     setPoints((prev) => prev - product.pointsCost);
@@ -147,6 +128,13 @@ export const GameProvider = ({ children }) => {
     fireCelebration();
 
     return { success: true, order: newOrder };
+  };
+
+  // Mark order as collected / scanned by merchant
+  const markOrderPickedUp = (orderId) => {
+    setOrders((prev) =>
+      prev.map((o) => (o.orderId === orderId ? { ...o, status: 'Picked Up' } : o))
+    );
   };
 
   // Purchase coupon or discount to save in backpack
@@ -160,6 +148,7 @@ export const GameProvider = ({ children }) => {
       productId: couponProduct.id,
       title: couponProduct.title,
       merchant: couponProduct.merchant,
+      pickupLocation: couponProduct.pickupLocation,
       discountAmount: couponProduct.discountAmount,
       discountCode: couponProduct.discountCode,
       validity: couponProduct.validity,
@@ -179,10 +168,6 @@ export const GameProvider = ({ children }) => {
     fireCelebration();
 
     return { success: true, coupon: newCoupon };
-  };
-
-  const updateShippingAddress = (newAddr) => {
-    setShippingAddress(newAddr);
   };
 
   const resetDemo = () => {
@@ -207,14 +192,13 @@ export const GameProvider = ({ children }) => {
         pendingMissions,
         orders,
         coupons,
-        shippingAddress,
-        updateShippingAddress,
         activeTab,
         setActiveTab,
         completeMission,
         submitForHumanReview,
         simulateHumanApproval,
-        buyPhysicalProduct,
+        buyStoreProduct,
+        markOrderPickedUp,
         buyCoupon,
         resetDemo,
         addBonusPoints

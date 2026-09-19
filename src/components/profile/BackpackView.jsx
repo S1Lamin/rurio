@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Backpack, Package, Tag, Copy, Check, Truck, MapPin, CheckCircle2, ChevronRight } from 'lucide-react';
+import { Backpack, QrCode, Tag, Copy, Check, Store, MapPin, CheckCircle2, ChevronRight, ArrowUpRight } from 'lucide-react';
 import { useGame } from '../../context/GameContext';
 import { MISSIONS_DATA } from '../../data/missions';
+import { PickupQRModal } from '../marketplace/PickupQRModal';
 
 export const BackpackView = () => {
   const { points, completedMissions, orders, coupons, setActiveTab } = useGame();
   const [activeTab, setActiveTabFilter] = useState('all'); // 'all' | 'orders' | 'coupons'
   const [copiedCode, setCopiedCode] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   const completedList = MISSIONS_DATA.filter((m) => completedMissions.includes(m.id));
 
@@ -58,7 +60,7 @@ export const BackpackView = () => {
         </div>
 
         <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '10px 6px', textAlign: 'center' }}>
-          <div style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: 600 }}>PARCELS</div>
+          <div style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: 600 }}>PICKUPS</div>
           <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.05rem', fontWeight: 800, color: '#059669' }}>
             {orders.length}
           </div>
@@ -108,7 +110,7 @@ export const BackpackView = () => {
             boxShadow: activeTab === 'orders' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none'
           }}
         >
-          Parcels ({orders.length})
+          Pickups ({orders.length})
         </button>
         <button
           type="button"
@@ -130,18 +132,18 @@ export const BackpackView = () => {
         </button>
       </div>
 
-      {/* 1. PHYSICAL PARCEL SHIPMENTS */}
+      {/* 1. STORE PICKUP ORDERS WITH QR CODE */}
       {(activeTab === 'all' || activeTab === 'orders') && (
         <div style={{ marginBottom: '18px' }}>
           <div className="vouchers-section-title">
-            <Package size={16} color="#059669" />
-            <span>Delivered Parcels & Souvenirs ({orders.length})</span>
+            <QrCode size={16} color="#059669" />
+            <span>Store Pickup Passes ({orders.length})</span>
           </div>
 
           {orders.length === 0 ? (
             <div style={{ background: '#fff', border: '1px dashed #cbd5e1', borderRadius: '14px', padding: '16px', textAlign: 'center', marginBottom: '10px' }}>
               <div style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '8px' }}>
-                No physical souvenirs ordered yet.
+                No souvenir store pickups ordered yet.
               </div>
               <button
                 type="button"
@@ -149,73 +151,78 @@ export const BackpackView = () => {
                 style={{ width: 'auto', padding: '6px 14px', fontSize: '0.7rem', margin: '0 auto' }}
                 onClick={() => setActiveTab('market')}
               >
-                Browse Souvenirs in Market
+                Browse Items in Market
               </button>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {orders.map((ord) => (
-                <div
-                  key={ord.orderId}
-                  style={{
-                    background: '#fff',
-                    borderRadius: '14px',
-                    border: '1px solid #e2e8f0',
-                    padding: '12px',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
-                  }}
-                >
-                  <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '8px' }}>
-                    <img
-                      src={ord.image}
-                      alt={ord.title}
-                      style={{ width: '48px', height: '48px', borderRadius: '8px', objectFit: 'cover' }}
-                    />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0f172a' }}>
-                        {ord.title}
-                      </div>
-                      <div style={{ fontSize: '0.65rem', color: '#059669', fontWeight: 600 }}>
-                        {ord.merchant}
-                      </div>
-                      <div style={{ fontSize: '0.65rem', color: '#64748b' }}>
-                        Ordered: {ord.orderedAt}
-                      </div>
-                    </div>
-                    <span
-                      style={{
-                        background: '#ecfdf5',
-                        color: '#047857',
-                        fontSize: '0.65rem',
-                        fontWeight: 700,
-                        padding: '3px 8px',
-                        borderRadius: '999px',
-                        alignSelf: 'flex-start'
-                      }}
-                    >
-                      {ord.status}
-                    </span>
-                  </div>
+              {orders.map((ord) => {
+                const isCollected = ord.status === 'Picked Up';
 
-                  {/* Tracking info box */}
-                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px 10px', fontSize: '0.7rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', color: '#475569', marginBottom: '3px' }}>
-                      <span>Tracking:</span>
-                      <span style={{ fontFamily: 'monospace', fontWeight: 700, color: '#0f172a' }}>
-                        {ord.trackingCode}
+                return (
+                  <div
+                    key={ord.orderId}
+                    style={{
+                      background: '#fff',
+                      borderRadius: '14px',
+                      border: '1px solid #e2e8f0',
+                      padding: '12px',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.03)',
+                      cursor: 'pointer',
+                      transition: 'transform 0.2s'
+                    }}
+                    onClick={() => setSelectedOrder(ord)}
+                  >
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '8px' }}>
+                      <img
+                        src={ord.image}
+                        alt={ord.title}
+                        style={{ width: '48px', height: '48px', borderRadius: '8px', objectFit: 'cover' }}
+                      />
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0f172a' }}>
+                          {ord.title}
+                        </div>
+                        <div style={{ fontSize: '0.65rem', color: '#059669', fontWeight: 600 }}>
+                          {ord.merchant}
+                        </div>
+                        <div style={{ fontSize: '0.65rem', color: '#64748b' }}>
+                          Ordered: {ord.orderedAt}
+                        </div>
+                      </div>
+                      <span
+                        style={{
+                          background: isCollected ? '#f1f5f9' : '#ecfdf5',
+                          color: isCollected ? '#64748b' : '#047857',
+                          fontSize: '0.65rem',
+                          fontWeight: 700,
+                          padding: '3px 8px',
+                          borderRadius: '999px',
+                          alignSelf: 'flex-start'
+                        }}
+                      >
+                        {ord.status}
                       </span>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', color: '#475569', marginBottom: '3px' }}>
-                      <span>Carrier:</span>
-                      <span style={{ fontWeight: 600 }}>{ord.carrier}</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', color: '#059669', fontWeight: 700 }}>
-                      <span>Delivery To:</span>
-                      <span>{ord.shippingAddress.city}, {ord.shippingAddress.country}</span>
+
+                    {/* Location & QR trigger row */}
+                    <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div>
+                        <div style={{ fontSize: '0.65rem', color: '#64748b' }}>Pickup at:</div>
+                        <div style={{ fontSize: '0.7rem', fontWeight: 600, color: '#0f172a' }}>
+                          {ord.pickupLocation}
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#059669', fontSize: '0.72rem', fontWeight: 700 }}>
+                        <QrCode size={14} />
+                        <span>Show QR Code</span>
+                        <ArrowUpRight size={12} />
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -370,6 +377,14 @@ export const BackpackView = () => {
           </div>
         )}
       </div>
+
+      {/* Order Pickup QR Modal */}
+      {selectedOrder && (
+        <PickupQRModal
+          order={selectedOrder}
+          onClose={() => setSelectedOrder(null)}
+        />
+      )}
     </div>
   );
 };

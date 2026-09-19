@@ -1,18 +1,28 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Star, Truck, Tag, ShieldCheck, CheckCircle2, Store, Heart, Share2, ArrowRight, Package } from 'lucide-react';
+import { ArrowLeft, Star, Store, MapPin, Clock, Tag, Heart, Share2, ArrowRight, CheckCircle2, QrCode } from 'lucide-react';
 import { useGame } from '../../context/GameContext';
-import { CheckoutModal } from './CheckoutModal';
+import { PickupQRModal } from './PickupQRModal';
+import { MiniMapPreview } from '../common/MiniMapPreview';
+import { StoreMapModal } from '../common/StoreMapModal';
 
 export const ProductDetailPage = ({ product, onBack }) => {
-  const { points, buyCoupon, setActiveTab } = useGame();
-  const [showCheckout, setShowCheckout] = useState(false);
+  const { points, buyStoreProduct, buyCoupon, setActiveTab } = useGame();
+  const [createdOrder, setCreatedOrder] = useState(null);
   const [couponPurchased, setCouponPurchased] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  const [showMapModal, setShowMapModal] = useState(false);
 
   if (!product) return null;
 
   const isCoupon = product.type === 'COUPON';
   const canAfford = points >= product.pointsCost;
+
+  const handleOrderStorePickup = () => {
+    const result = buyStoreProduct(product);
+    if (result.success) {
+      setCreatedOrder(result.order);
+    }
+  };
 
   const handleBuyCoupon = () => {
     const result = buyCoupon(product);
@@ -116,18 +126,35 @@ export const ProductDetailPage = ({ product, onBack }) => {
           )}
         </div>
 
-        {/* Delivery or Coupon Highlight Banner */}
+        {/* Local Store Pickup Highlight Banner with Mini Map Preview */}
         {!isCoupon ? (
-          <div className="delivery-banner-box">
-            <Truck size={22} color="#059669" style={{ flexShrink: 0 }} />
-            <div>
-              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#166534' }}>
-                Free Direct Home Delivery
+          <div
+            className="delivery-banner-box"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '10px'
+            }}
+          >
+            <div style={{ flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', fontWeight: 700, color: '#166534' }}>
+                <QrCode size={18} color="#059669" />
+                <span>Local Store Pickup via QR Code</span>
               </div>
-              <div style={{ fontSize: '0.72rem', color: '#15803d', marginTop: '2px' }}>
-                Dispatched by Correos Express. Ships to your registered postal address in <strong>{product.estimatedDays}</strong>.
+              <div style={{ fontSize: '0.72rem', color: '#15803d', marginTop: '3px', lineHeight: 1.4 }}>
+                Instant pickup pass in app. Visit <strong>{product.pickupLocation}</strong> ({product.pickupAddress}) and present your QR code to the seller.
               </div>
+              {product.openingHours && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.68rem', color: '#047857', marginTop: '4px', fontWeight: 600 }}>
+                  <Clock size={12} />
+                  <span>{product.openingHours}</span>
+                </div>
+              )}
             </div>
+
+            {/* Small Map Component next to the address */}
+            {/* <MiniMapPreview onClick={() => setShowMapModal(true)} /> */}
           </div>
         ) : (
           <div className="coupon-banner-box">
@@ -137,7 +164,7 @@ export const ProductDetailPage = ({ product, onBack }) => {
                 Instant Digital Discount Coupon
               </div>
               <div style={{ fontSize: '0.72rem', color: '#b91c1c', marginTop: '2px' }}>
-                Saves directly into your <strong>Backpack</strong> with a copyable promo code for online and in-store checkout.
+                Saves directly into your <strong>Backpack</strong> with a copyable promo code for checkout at local stores.
               </div>
             </div>
           </div>
@@ -181,10 +208,10 @@ export const ProductDetailPage = ({ product, onBack }) => {
                 ))}
               </div>
               <span style={{ fontSize: '0.72rem', fontWeight: 700, color: '#1e293b' }}>Elena R.</span>
-              <span style={{ fontSize: '0.65rem', color: '#94a3b8' }}>• Verified Buyer</span>
+              <span style={{ fontSize: '0.65rem', color: '#94a3b8' }}>• Verified Tourist</span>
             </div>
             <p style={{ fontSize: '0.73rem', color: '#475569', lineHeight: 1.4, margin: 0 }}>
-              "Arrived safely at my home in Madrid within 4 days. Beautiful craftsmanship from San Xoán and the relief details are stunning!"
+              "Walked into Casa Rural O Fonte, showed the QR code to the cashier, and got my souvenir right away. Super convenient and fun to play the game around town!"
             </p>
           </div>
         </div>
@@ -228,10 +255,11 @@ export const ProductDetailPage = ({ product, onBack }) => {
                 type="button"
                 className="btn-primary-action"
                 disabled={!canAfford}
-                onClick={() => setShowCheckout(true)}
+                onClick={handleOrderStorePickup}
               >
+                <QrCode size={16} />
                 <span>
-                  {canAfford ? `Buy with ${product.pointsCost} Points (Ship to Address)` : `Need ${product.pointsCost - points} more points`}
+                  {canAfford ? `Order with ${product.pointsCost} Pts (Get Pickup QR)` : `Need ${product.pointsCost - points} more points`}
                 </span>
                 <ArrowRight size={16} />
               </button>
@@ -253,13 +281,23 @@ export const ProductDetailPage = ({ product, onBack }) => {
         )}
       </div>
 
-      {/* Checkout Modal for Address Confirmation */}
-      {showCheckout && (
-        <CheckoutModal
-          product={product}
-          onClose={() => setShowCheckout(false)}
-          onOrderSuccess={() => {
-            setShowCheckout(false);
+      {/* Store Location Map Modal */}
+      {showMapModal && (
+        <StoreMapModal
+          locationName={product.pickupLocation}
+          address={product.pickupAddress}
+          hours={product.openingHours}
+          onClose={() => setShowMapModal(false)}
+        />
+      )}
+
+      {/* Pickup QR Code Modal when order is placed */}
+      {createdOrder && (
+        <PickupQRModal
+          order={createdOrder}
+          onClose={() => {
+            setCreatedOrder(null);
+            onBack();
           }}
         />
       )}

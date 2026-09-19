@@ -8,10 +8,11 @@ export const PRODUCTS_DATA = [
     rating: 4.9,
     reviewsCount: 86,
     merchant: 'San Xoán Souvenirs Guild',
+    pickupLocation: 'Casa Rural O Fonte (Hub)',
+    pickupAddress: 'Av. Fernando III, 10A, San Xoán de Río',
+    openingHours: 'Mon-Sun: 09:00 - 20:30',
     image: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=600&q=80',
     badge: 'Best Seller',
-    isDeliveryIncluded: true,
-    estimatedDays: '3-5 business days',
     specs: {
       Material: 'High-density cast polyresin (hand-painted relief)',
       Dimensions: '7.5 cm x 5.5 cm',
@@ -29,10 +30,11 @@ export const PRODUCTS_DATA = [
     rating: 4.8,
     reviewsCount: 64,
     merchant: 'San Xoán Souvenirs Guild',
+    pickupLocation: 'Casa Rural O Fonte (Hub)',
+    pickupAddress: 'Av. Fernando III, 10A, San Xoán de Río',
+    openingHours: 'Mon-Sun: 09:00 - 20:30',
     image: 'https://images.unsplash.com/photo-1590402494682-cd3fb53b1f70?auto=format&fit=crop&w=600&q=80',
     badge: 'Popular',
-    isDeliveryIncluded: true,
-    estimatedDays: '3-5 business days',
     specs: {
       Material: 'Embossed stone-resin with matte finish',
       Dimensions: '8.0 cm x 5.0 cm',
@@ -50,10 +52,11 @@ export const PRODUCTS_DATA = [
     rating: 4.9,
     reviewsCount: 112,
     merchant: 'Artesanía Do Río',
+    pickupLocation: 'Old Town Workshop & Gallery',
+    pickupAddress: 'Rúa do Souto, 12, San Xoán de Río',
+    openingHours: 'Tue-Sat: 10:00 - 19:00',
     image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=600&q=80',
     badge: 'Eco Handmade',
-    isDeliveryIncluded: true,
-    estimatedDays: '3-5 business days',
     specs: {
       Material: 'Fallen native chestnut hardwood',
       Finish: 'Organic beeswax coating',
@@ -71,10 +74,11 @@ export const PRODUCTS_DATA = [
     rating: 4.7,
     reviewsCount: 48,
     merchant: 'Cerámica da Ribeira',
+    pickupLocation: 'Río Artisans Collective Shop',
+    pickupAddress: 'Avenida de Galicia, 8, San Xoán de Río',
+    openingHours: 'Daily: 10:00 - 18:30',
     image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80',
     badge: 'Craft Pottery',
-    isDeliveryIncluded: true,
-    estimatedDays: '4-6 business days',
     specs: {
       Capacity: '350 ml (12 oz)',
       Material: 'Double-glazed stoneware ceramic',
@@ -92,10 +96,11 @@ export const PRODUCTS_DATA = [
     rating: 5.0,
     reviewsCount: 39,
     merchant: 'Ourivaría Castro',
+    pickupLocation: 'Joyería Tradicional Castro',
+    pickupAddress: 'Rúa da Igrexa, 3, San Xoán de Río',
+    openingHours: 'Mon-Fri: 10:00 - 19:30',
     image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=600&q=80',
     badge: 'Sterling 925',
-    isDeliveryIncluded: true,
-    estimatedDays: '3-5 business days',
     specs: {
       Metal: 'Solid 925 Sterling Silver',
       Chain: '45 cm sterling rope chain included',
@@ -113,17 +118,18 @@ export const PRODUCTS_DATA = [
     rating: 4.9,
     reviewsCount: 142,
     merchant: 'Apicultura Souto Verde',
+    pickupLocation: 'Casa Rural O Fonte Honey Store',
+    pickupAddress: 'Av. Fernando III, 10A, San Xoán de Río',
+    openingHours: 'Mon-Sun: 09:00 - 20:30',
     image: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=600&q=80',
-    badge: 'Direct Delivery',
-    isDeliveryIncluded: true,
-    estimatedDays: '3-5 business days',
+    badge: 'Store Pickup',
     specs: {
       NetWeight: '500g (1.1 lbs)',
       Packaging: 'Cushioned recyclable glass jar',
       Harvest: 'Wild floral chestnut blossom',
       Origin: 'Monte Candedo apiaries'
     },
-    description: 'Direct-from-hive unprocessed chestnut honey safely packed and delivered right to your home address. Rich dark notes with lingering floral maltiness.'
+    description: 'Direct-from-hive unprocessed chestnut honey packed in a traditional glass jar. Ready for immediate pickup at the local honey depot with your QR code.'
   },
 
   /* =========================================================
@@ -138,13 +144,16 @@ export const PRODUCTS_DATA = [
     rating: 4.9,
     reviewsCount: 97,
     merchant: 'Apicultura Souto Verde',
+    pickupLocation: 'Apicultura Souto Verde Shop',
+    pickupAddress: 'Av. Fernando III, 10A, San Xoán de Río',
+    openingHours: 'Mon-Sun: 09:00 - 20:30',
     image: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?auto=format&fit=crop&w=600&q=80',
     badge: '50% OFF',
     discountCode: 'HONEY50-RURIO',
     discountAmount: '50% Discount',
     validity: 'Valid for 90 days',
-    description: 'Get 50% discount on your second glass jar or litre of raw honey when purchasing directly from the producer in San Xoán or online store.',
-    instructions: 'Saved to your Backpack. Show this promo code at checkout online or in the shop.'
+    description: 'Get 50% discount on your second glass jar or litre of raw honey when purchasing directly at the local honey store in San Xoán de Río.',
+    instructions: 'Saved to your Backpack. Present the promo code at the counter during checkout.'
   },
   {
     id: 'c2',
@@ -155,13 +164,16 @@ export const PRODUCTS_DATA = [
     rating: 4.8,
     reviewsCount: 118,
     merchant: 'Panadería Tradicional de Río',
+    pickupLocation: 'Panadería Tradicional',
+    pickupAddress: 'Rúa do Concello, 12, San Xoán de Río',
+    openingHours: 'Mon-Sat: 07:30 - 14:30',
     image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80',
     badge: '30% OFF',
     discountCode: 'BICA30-RURIO',
     discountAmount: '30% Discount',
     validity: 'Valid for 30 days',
     description: 'Enjoy 30% off any family-sized box of freshly baked traditional Bica pastry plus 2 complimentary artisanal pot coffees.',
-    instructions: 'Present this coupon code from your Backpack at the bakery register.'
+    instructions: 'Show this coupon code from your Backpack to the baker at the register.'
   },
   {
     id: 'c3',
@@ -172,13 +184,16 @@ export const PRODUCTS_DATA = [
     rating: 5.0,
     reviewsCount: 42,
     merchant: 'Río Navea Outdoor Adventures',
+    pickupLocation: 'Kayak Center Navea Bridge',
+    pickupAddress: 'Ponte Navea Arch Crossing, San Xoán de Río',
+    openingHours: 'Daily: 09:00 - 18:00',
     image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=600&q=80',
     badge: '€10 Voucher',
     discountCode: 'KAYAK10-RURIO',
     discountAmount: '€10 Voucher',
     validity: 'Valid for 120 days',
     description: '€10 direct savings coupon towards guided canyon kayaking, e-bike rentals, or heritage walking excursions across the Ribeira Sacra.',
-    instructions: 'Apply discount code during online booking or give to your excursion guide.'
+    instructions: 'Present discount code at the river station or to your tour guide.'
   }
 ];
 

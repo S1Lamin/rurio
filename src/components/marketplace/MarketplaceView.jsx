@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Coins, Search, Star, Truck, Tag, PlusCircle } from 'lucide-react';
+import { Coins, Search, Star, QrCode, Tag, PlusCircle, Store } from 'lucide-react';
 import { PRODUCTS_DATA, MARKET_CATEGORIES } from '../../data/products';
 import { useGame } from '../../context/GameContext';
 import { ProductDetailPage } from './ProductDetailPage';
@@ -209,7 +209,7 @@ export const MarketplaceView = () => {
                     </div>
                   </div>
 
-                  {/* Delivery or Coupon Tag */}
+                  {/* Pickup QR or Coupon Tag */}
                   <div style={{ fontSize: '0.6rem', color: isCoupon ? '#dc2626' : '#059669', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '3px' }}>
                     {isCoupon ? (
                       <>
@@ -218,8 +218,8 @@ export const MarketplaceView = () => {
                       </>
                     ) : (
                       <>
-                        <Truck size={10} />
-                        <span>Free Shipping</span>
+                        <QrCode size={10} />
+                        <span>Store Pickup (QR)</span>
                       </>
                     )}
                   </div>
